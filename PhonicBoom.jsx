@@ -1,3 +1,5 @@
+//Phonic Boom vx Oct 25, 2023
+
 //Import Gentle JSON v1.0
 #include "json2.js"
 
@@ -43,17 +45,6 @@ var CHARLIESDIC = {
     "zh" : [2,"D"],
     "sil" : [0, "Neutral"]
 };
-
-
-//alert(okayGo);
-
-
-
-//test one - is this object loading? test by doing an alert
-
-//test two - yeah we're loading. the next test iis to loop through and access eahc phoneme.
-//that's a for loop w the length of the WORDS array.
-// Then inside of each word, we get the length of the phones array and loop through.
 
 
 slapValuesDown = function(myObj){
