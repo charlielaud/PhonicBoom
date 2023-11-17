@@ -2,6 +2,9 @@
 
 //Import Gentle JSON v1.0
 #include "json2.js"
+#include "chuckdict.js"
+
+var dropDownMouthList =["MBP1", "Ah", "CONS1", "Eh", "FV", "LTH", "MBP2", "Oh", "CONS2", "CONS3", "Ih", "Wu"];
 
 var CHARLIESDIC = {
     "aa" : [7,"Oh"],
@@ -53,26 +56,31 @@ slapValuesDown = function(myObj){
     var frameRizzle = activeComp.frameRate; //get the frame rate, but in a cool way that wont accidentally reference a system variable
     var theEffect = activeLayer.property("Effects"); //A reference for an arbitrary effect property
     var theSlider = theEffect.property("Mouth Slider").property("Slider"); // A reference for a slider property (always called "Mouth Slider" in this version)
-
+    var theDropdown = theEffect.property("Mouth Shapes").property("Menu"); // A reference for a dropdown menu.
+    
     for (i = 0; i < myObj.words.length; i++){
         var myTimeCode = myObj.words[i].start; //this will update with each new word
         try{
             for (j = 0; j < myObj.words[i].phones.length; j++){
+                //"long phone" is the JSON given string, "short phone" is an abreviated version for our purposes
                 var myLongPhone = myObj.words[i].phones[j].phone;  //This describes each sequential phoneme "j" in word "i"
                 var myShortPhone = myLongPhone.split("_")[0]; //this describes the same phoneme just with extra syntax CHOPPED OFF.
 
+                //Quick check to see if it's an error case. If not, procede.
                 if (myShortPhone != "oov")
                 {
                     var myFinalPhone = CHARLIESDIC[myShortPhone][0]; //this describes either a final phoneme or a number that corresponds.
                     theSlider.setValueAtTime(myTimeCode, myFinalPhone);
                     myTimeCode = myTimeCode + myObj.words[i].phones[j].duration; //this updates AFTER they keyframe is applied.
 
-                    if (j == myObj.words[i].phones.length - 1){ //this if statement basically just sees if we're at the end and if so, adds a NEUTRAL shape.
+                    if (j == myObj.words[i].phones.length - 1)
+                    { //this if statement basically just sees if we're at the end and if so, adds a NEUTRAL shape.
                         theSlider.setValueAtTime(myObj.words[i].end, 0);
                     }
                 }
             }
         }
+
         catch(err){
             alert("Unparsed Word Detected. Skipping.");
         }
@@ -92,6 +100,27 @@ getJSON = function(){
     //alert(myObj["transcript"]);
     return myObj;
 }
+
+addDropDown = function(selLayer)
+{
+    //Add a dropdown effect with mouth shapes
+    //M, Ah, Ch, Eh, F, L, M, Oh, Ch, Ch, I, W;
+    var dropdownEffect = selLayer.property("ADBE Effect Parade").addProperty("ADBE Dropdown Control");
+    dropdownEffect.property(1).setPropertyParameters(dropDownMouthList);
+}
+
+addSlider = function(selLayer)
+{
+    var mouthSlider = app.project.activeItem.selLayer.Effects.addProperty("ADBE Slider Control");
+    mouthSlider.name  = "Mouth Slider";
+}
+
+checkIfDropdown = function (selLayer)
+{
+
+}
+
+
 
 var myObjo = getJSON();
 slapValuesDown(myObjo);
